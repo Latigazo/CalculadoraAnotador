@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora con Anotaciones</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Enlazando el archivo CSS -->
+</head>
+
+<body>
+    <div id="contenedor-calculadora">
+        <!-- Calculadora -->
+        <div id="calculadora">
+            <!-- Panel de control para los temas -->
+            <div id="panel-control">
+                <label for="temas">Elige un tema:</label>
+                <select id="temas">
+                    <option value="tema-blanco-negro">Blanco y Negro</option>
+                    <option value="tema-azul-amarillo">Azul y Amarillo</option>
+                    <option value="tema-rojo-blanco">Rojo y Blanco</option>
+                </select>
+            </div>
+
+            <!-- Pantalla de la calculadora -->
+            <input type="text" id="pantalla" disabled>
+
+            <!-- Botones de la calculadora -->
+            <div id="botones">
+                <div class="fila">
+                    <button>C</button>
+                    <button>⌫</button>
+                    <button>%</button>
+                    <button>÷</button>
+                </div>
+                <div class="fila">
+                    <button>7</button>
+                    <button>8</button>
+                    <button>9</button>
+                    <button>×</button>
+                </div>
+                <div class="fila">
+                    <button>4</button>
+                    <button>5</button>
+                    <button>6</button>
+                    <button>-</button>
+                </div>
+                <div class="fila">
+                    <button>1</button>
+                    <button>2</button>
+                    <button>3</button>
+                    <button>+</button>
+                </div>
+                <div class="fila">
+                    <button>0</button>
+                    <button>.</button>
+                    <button>=</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Área de anotaciones -->
+        <div id="anotaciones">
+            <label for="input-anotaciones">Anotaciones:</label>
+            <textarea id="input-anotaciones" placeholder="Anota aquí tus gastos o lista de compras..."></textarea>
+        </div>
+    </div>
+
+    <script>
+        const pantalla = document.getElementById("pantalla");
+        const calculadora = document.getElementById("calculadora");
+        const selectTemas = document.getElementById("temas");
+        let operacionActual = "";
+
+        function agregarAOperacion(valor) {
+            // Convierte los caracteres especiales en operadores válidos de JavaScript
+            if (valor === "×") {
+                operacionActual += "*";
+            } else if (valor === "÷") {
+                operacionActual += "/";
+            } else if (valor === "=") {
+                try {
+                    const resultado = eval(operacionActual);
+                    pantalla.value = resultado;
+                    operacionActual = resultado.toString();
+                } catch {
+                    pantalla.value = "Error";
+                    operacionActual = "";
+                }
+            } else if (valor === "C") {
+                operacionActual = "";
+                pantalla.value = "";
+            } else if (valor === "⌫") {
+                operacionActual = operacionActual.slice(0, -1);
+                pantalla.value = operacionActual;
+            } else {
+                operacionActual += valor;
+            }
+            pantalla.value = operacionActual.replace(/\*/g, "×").replace(/\//g, "÷");
+        }
+
+        document.querySelectorAll("#botones button").forEach(boton => {
+            boton.addEventListener("click", () => {
+                agregarAOperacion(boton.textContent);
+            });
+        });
+
+        // Cambia el tema cuando el usuario selecciona una opción
+        selectTemas.addEventListener("change", (e) => {
+            // Quita las clases de temas anteriores
+            calculadora.classList.remove("tema-blanco-negro", "tema-azul-amarillo", "tema-rojo-blanco");
+
+            // Agrega la clase correspondiente al tema seleccionado
+            const temaSeleccionado = e.target.value;
+            calculadora.classList.add(temaSeleccionado);
+        });
+
+        // Selección de tema por defecto
+        calculadora.classList.add("tema-blanco-negro");
+    </script>
+</body>
+
+</html>
